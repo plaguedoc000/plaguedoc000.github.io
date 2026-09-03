@@ -12,11 +12,11 @@
     --card:#14181E;
     --card-2:#1B212A;
     --ink:#F5F7FA;
-    --ink-soft:#98A1AD;
-    --ink-dim:#6B747F;
+    --ink-soft:#A3ACB8;
+    --ink-dim:#737C88;
     --hairline:#252B34;
     --gold:#D3A857;
-    --gold-dim:#7A6234;
+    --gold-dim:#8A7040;
     --gold-wash:rgba(211,168,87,.09);
 
     --r:12px;
@@ -24,7 +24,7 @@
     --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
 
     /* вертикальный ритм: сжимается на низких экранах */
-    --gap:clamp(7px,1.2dvh,12px);
+    --gap:clamp(6px,1.05dvh,11px);
   }
 
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -50,7 +50,7 @@
     display:flex;
     flex-direction:column;
     gap:var(--gap);
-    padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 10px);
+    padding:calc(env(safe-area-inset-top) + 9px) 13px calc(env(safe-area-inset-bottom) + 9px);
   }
 
   /* ---------- шапка ---------- */
@@ -58,16 +58,30 @@
   .hdr h1{
     font-family:var(--font-display);
     font-weight:700;
-    font-size:clamp(18px,2.7dvh,23px);
+    font-size:clamp(21px,3.05dvh,27px);
     line-height:1.1;
     margin:0;
     letter-spacing:.01em;
   }
-  .hdr .sub{
-    font-size:clamp(10.5px,1.4dvh,12px);
+  .hdr .meta{text-align:right; line-height:1.25; min-width:0;}
+  .hdr .mon{
+    font-size:clamp(12.5px,1.7dvh,14.5px);
+    color:var(--ink-soft);
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .hdr .who{
+    font-size:clamp(11.5px,1.55dvh,13px);
     color:var(--ink-dim);
-    text-align:right;
-    line-height:1.3;
+    white-space:nowrap;
+  }
+  .todaybtn{
+    border:0; background:transparent; padding:0;
+    color:var(--gold);
+    font-family:var(--font-body);
+    font-size:clamp(11.5px,1.55dvh,13px);
+    font-weight:700;
+    cursor:pointer;
     white-space:nowrap;
   }
 
@@ -81,7 +95,7 @@
     color:var(--ink-soft);
     padding:clamp(6px,.95dvh,9px) 4px;
     border-radius:999px;
-    font-size:clamp(11.5px,1.55dvh,13.5px);
+    font-size:clamp(13px,1.75dvh,15px);
     font-weight:700;
     font-family:var(--font-body);
     white-space:nowrap;
@@ -90,13 +104,29 @@
   }
   .pill.active{background:var(--ink); border-color:var(--ink); color:var(--bg);}
 
-  /* ---------- дни ---------- */
-  .days{display:flex; gap:5px; flex:0 0 auto;}
+  /* ---------- недели и дни ---------- */
+  .days{display:flex; gap:4px; align-items:stretch; flex:0 0 auto;}
+  .daystrip{display:flex; gap:4px; flex:1 1 auto; min-width:0;}
+  .wknav{
+    flex:0 0 auto;
+    width:clamp(25px,7.2vw,31px);
+    border:1px solid var(--hairline);
+    background:var(--card);
+    color:var(--ink-soft);
+    border-radius:10px;
+    font-family:var(--font-body);
+    font-size:clamp(17px,2.3dvh,20px);
+    line-height:1;
+    cursor:pointer;
+    padding:0;
+  }
+  .wknav:disabled{opacity:.28; cursor:default;}
+
   .day{
     flex:1 1 0;
     min-width:0;
     text-align:center;
-    padding:clamp(5px,.8dvh,8px) 2px clamp(4px,.6dvh,6px);
+    padding:clamp(4px,.7dvh,7px) 2px clamp(4px,.55dvh,6px);
     border-radius:10px;
     border:1px solid transparent;
     background:transparent;
@@ -105,13 +135,14 @@
     color:var(--ink);
     position:relative;
   }
-  .day .wd{font-size:clamp(10px,1.35dvh,12px); color:var(--ink-dim); font-weight:600;}
-  .day .dt{font-size:clamp(14px,1.95dvh,17px); font-weight:700; line-height:1.15; margin-top:1px;}
+  .day .wd{font-size:clamp(11.5px,1.5dvh,13px); color:var(--ink-dim); font-weight:600;}
+  .day .dt{font-size:clamp(16px,2.15dvh,19px); font-weight:700; line-height:1.15; margin-top:1px;}
   .day.active{background:var(--card-2); border-color:#39414C;}
   .day.today .wd{color:var(--gold);}
   .day.today .dt{color:var(--gold);}
   .day.free .dt{color:var(--ink-dim);}
   .day.today.free .dt{color:var(--gold); opacity:.7;}
+  .day.out{opacity:.3;}
 
   .rule{height:1px; background:var(--hairline); flex:0 0 auto;}
 
@@ -123,7 +154,7 @@
     min-height:0;
     display:flex;
     flex-direction:column;
-    gap:clamp(6px,1dvh,10px);
+    gap:clamp(5px,.9dvh,10px);
     justify-content:center;   /* остаток высоты делится поровну сверху и снизу */
   }
 
@@ -131,20 +162,20 @@
     position:relative;
     flex:1 1 0;
     min-height:0;
-    max-height:clamp(118px,19.5dvh,168px);
+    max-height:clamp(126px,20.5dvh,180px);
     overflow:hidden;
     display:grid;
     grid-template-columns:22px 1fr;
     column-gap:10px;
     align-content:center;
-    padding:clamp(8px,1.3dvh,14px) 13px;
+    padding:clamp(7px,1.2dvh,14px) 12px;
     border:1px solid var(--hairline);
     border-radius:var(--r);
     background:var(--card);
   }
   .lesson .num{
     font-family:var(--font-display);
-    font-size:clamp(13px,1.8dvh,15px);
+    font-size:clamp(14.5px,1.95dvh,16.5px);
     font-weight:700;
     color:var(--ink-dim);
     text-align:center;
@@ -154,26 +185,26 @@
   .lesson .body{min-width:0; display:flex; flex-direction:column; gap:3px;}
   .lesson .top{
     display:flex; align-items:center; gap:8px;
-    font-size:clamp(11.5px,1.55dvh,13px);
+    font-size:clamp(13px,1.7dvh,14.5px);
     color:var(--ink-soft);
     font-weight:600;
     font-variant-numeric:tabular-nums;
   }
   .lesson .subj{
-    font-size:clamp(13.5px,1.95dvh,16px);
+    font-size:clamp(15.5px,2.15dvh,18px);
     font-weight:600;
-    line-height:1.3;
+    line-height:1.28;
     display:-webkit-box;
     -webkit-line-clamp:2;
     -webkit-box-orient:vertical;
     overflow:hidden;
   }
   .lesson .info{
-    font-size:clamp(11px,1.5dvh,13px);
+    font-size:clamp(12.5px,1.7dvh,14.5px);
     color:var(--ink-soft);
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  .lesson .stream{font-size:clamp(10.5px,1.4dvh,12px); color:var(--gold-dim); font-weight:600;}
+  .lesson .stream{font-size:clamp(12px,1.6dvh,13.5px); color:var(--gold-dim); font-weight:600;}
 
   /* идёт сейчас */
   .lesson.now{
@@ -188,7 +219,7 @@
     background:var(--gold);
     color:#12140F;
     font-weight:800;
-    font-size:clamp(10.5px,1.4dvh,12px);
+    font-size:clamp(11.5px,1.55dvh,13px);
     letter-spacing:.01em;
     padding:2px 8px;
     border-radius:999px;
@@ -199,7 +230,7 @@
     margin-left:auto;
     color:var(--gold);
     font-weight:700;
-    font-size:clamp(10.5px,1.4dvh,12px);
+    font-size:clamp(11.5px,1.55dvh,13px);
     white-space:nowrap;
     font-variant-numeric:tabular-nums;
   }
@@ -214,33 +245,33 @@
   .timeline.tight .lesson.past{
     flex:0 0 auto;
     max-height:none;
-    padding:clamp(6px,.9dvh,9px) 13px;
+    padding:clamp(5px,.8dvh,9px) 12px;
   }
   .timeline.tight .lesson.past .body{gap:0;}
-  .timeline.tight .lesson.past .subj{font-size:clamp(12px,1.65dvh,13.5px); font-weight:500; -webkit-line-clamp:1;}
+  .timeline.tight .lesson.past .subj{font-size:clamp(13.5px,1.8dvh,15px); font-weight:500; -webkit-line-clamp:1;}
   .timeline.tight .lesson.past .info,
   .timeline.tight .lesson.past .stream{display:none;}
-  .timeline.tight .lesson.past .top{font-size:clamp(10.5px,1.4dvh,12px);}
+  .timeline.tight .lesson.past .top{font-size:clamp(12px,1.55dvh,13px);}
 
   /* ---------- пустые состояния ---------- */
   .notice{
     flex:0 0 auto;
     margin:auto 0;                    /* карточка по центру свободной высоты */
     display:flex; flex-direction:column; align-items:center;
-    gap:7px;
+    gap:8px;
     text-align:center;
-    padding:clamp(20px,3.2dvh,30px) 20px;
+    padding:clamp(18px,3dvh,30px) 20px;
     border:1px solid var(--hairline);
     border-radius:var(--r);
     background:var(--card);
   }
   .notice .big{
     font-family:var(--font-display);
-    font-size:clamp(18px,2.6dvh,23px);
+    font-size:clamp(20px,2.9dvh,26px);
     font-weight:700;
     line-height:1.25;
   }
-  .notice .sub{font-size:clamp(12px,1.6dvh,14px); color:var(--ink-soft); line-height:1.45; max-width:30ch;}
+  .notice .sub{font-size:clamp(13.5px,1.8dvh,15.5px); color:var(--ink-soft); line-height:1.45; max-width:30ch;}
   .notice.rest{border-style:dashed;}
   .notice.rest .big{color:var(--ink-soft);}
   .notice.event{
@@ -248,12 +279,26 @@
     background:linear-gradient(180deg,var(--gold-wash),transparent 70%),var(--card);
   }
   .notice.event .big{color:var(--gold);}
+  .notice.holiday{border-style:dashed; border-color:var(--gold-dim);}
+  .notice.holiday .big{color:var(--gold);}
+  .retry{
+    margin-top:4px;
+    border:1px solid var(--gold-dim);
+    background:transparent;
+    color:var(--gold);
+    font-family:var(--font-body);
+    font-size:clamp(13px,1.7dvh,14.5px);
+    font-weight:700;
+    padding:7px 16px;
+    border-radius:999px;
+    cursor:pointer;
+  }
 
   .foot{
     flex:0 0 auto;
     text-align:center;
     margin-top:2px;
-    font-size:clamp(11px,1.5dvh,12.5px);
+    font-size:clamp(12px,1.6dvh,13.5px);
     color:var(--ink-dim);
     padding-top:2px;
   }
@@ -263,6 +308,14 @@
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;}
   }
+
+  /* очень низкие экраны (iPhone SE и подобные): ужимаем воздух, но не шрифты */
+  @media (max-height:600px){
+    .app{padding-left:11px; padding-right:11px;}
+    .lesson{padding-left:10px; padding-right:10px;}
+    .lesson .body{gap:2px;}
+    .notice{padding-top:14px; padding-bottom:14px;}
+  }
 </style>
 </head>
 <body>
@@ -270,11 +323,18 @@
 
   <header class="hdr">
     <h1>Расписание</h1>
-    <div class="sub">РАНХиГС, Калуга<br>1 курс</div>
+    <div class="meta">
+      <div class="mon" id="monthLabel">&nbsp;</div>
+      <div class="who" id="whoLine">&nbsp;</div>
+    </div>
   </header>
 
   <div class="groups" id="groupTabs"></div>
-  <div class="days" id="dayTabs"></div>
+  <div class="days">
+    <button class="wknav" type="button" id="prevWk" aria-label="Предыдущая неделя">‹</button>
+    <div class="daystrip" id="dayTabs"></div>
+    <button class="wknav" type="button" id="nextWk" aria-label="Следующая неделя">›</button>
+  </div>
   <div class="rule"></div>
   <main id="content"></main>
 
@@ -284,103 +344,19 @@
 (function(){
   "use strict";
 
-  var GROUPS = ["ДМ-26","ДГиМУ-26","ДЭ-26","ДТД-26"];
+  var DATA_URL  = "schedule.json";
+  var CACHE_KEY = "schedule_cache_v1";
 
-  var SCHEDULE = [
-    { date:"2026-08-31", weekday:"Понедельник", short:"Пн", dateLabel:"31 августа", type:"notice",
-      notice:"Каникулы", noticeSub:"Занятий нет.", tone:"rest" },
-
-    { date:"2026-09-01", weekday:"Вторник", short:"Вт", dateLabel:"1 сентября", type:"notice",
-      notice:"День знаний", noticeSub:"«Народный дом», ул. Ленина, 74. Начало в 8:30.", tone:"event" },
-
-    { date:"2026-09-02", weekday:"Среда", short:"Ср", dateLabel:"2 сентября", type:"lessons",
-      lessons:{
-        "ДМ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"503", shared:"ДГиМУ-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"503", shared:"ДГиМУ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"История управленческой мысли", teacher:"Карпов Д.В.", room:null}
-        ],
-        "ДГиМУ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"503", shared:"ДМ-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"503", shared:"ДМ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Иностранный язык", teacher:"Квач Н.В.", room:"507"},
-          {num:4, start:"13:20", end:"14:40", subject:"Иностранный язык", teacher:"Квач Н.В.", room:"507"}
-        ],
-        "ДЭ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Общий менеджмент", teacher:"Чаусова Л.А.", room:"204", shared:"ДТД-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"Общий менеджмент", teacher:"Чаусова Л.А.", room:"204", shared:"ДТД-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Иностранный язык", teacher:"Вотинова О.Ю.", room:"204"}
-        ],
-        "ДТД-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Общий менеджмент", teacher:"Чаусова Л.А.", room:"204", shared:"ДЭ-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"Общий менеджмент", teacher:"Чаусова Л.А.", room:"204", shared:"ДЭ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Иностранный язык", teacher:"Вотинова О.Ю.", room:"206"},
-          {num:4, start:"13:20", end:"14:40", subject:"Иностранный язык", teacher:"Вотинова О.Ю.", room:"206"}
-        ]
-      }
-    },
-
-    { date:"2026-09-03", weekday:"Четверг", short:"Чт", dateLabel:"3 сентября", type:"lessons",
-      lessons:{
-        "ДМ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Основы российской государственности", brief:"Основы рос. государственности", teacher:"Чернецова В.А.", room:"503", shared:"ДГиМУ-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"История России", teacher:"Ковалев А.В.", room:"503", shared:"ДГиМУ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Введение в профессию", teacher:"Стельмах Е.Н.", room:"310"}
-        ],
-        "ДГиМУ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Основы российской государственности", brief:"Основы рос. государственности", teacher:"Чернецова В.А.", room:"503", shared:"ДМ-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"История России", teacher:"Ковалев А.В.", room:"503", shared:"ДМ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Введение в профессию", teacher:"Голишевский М.Б.", room:"502"}
-        ],
-        "ДЭ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"История России", teacher:"Иевлева О.И.", room:"204", shared:"ДТД-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"Основы российской государственности", brief:"Основы рос. государственности", teacher:"Чернецова В.А.", room:"204", shared:"ДТД-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"204", shared:"ДТД-26"},
-          {num:4, start:"13:20", end:"14:40", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"204", shared:"ДТД-26"}
-        ],
-        "ДТД-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"История России", teacher:"Иевлева О.И.", room:"204", shared:"ДЭ-26"},
-          {num:2, start:"10:00", end:"11:20", subject:"Основы российской государственности", brief:"Основы рос. государственности", teacher:"Чернецова В.А.", room:"204", shared:"ДЭ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"204", shared:"ДЭ-26"},
-          {num:4, start:"13:20", end:"14:40", subject:"Экономическая теория: Микроэкономика", brief:"Микроэкономика", teacher:"Косихина О.П.", room:"204", shared:"ДЭ-26"}
-        ]
-      }
-    },
-
-    { date:"2026-09-04", weekday:"Пятница", short:"Пт", dateLabel:"4 сентября", type:"lessons",
-      lessons:{
-        "ДМ-26":[
-          {num:2, start:"10:00", end:"11:20", subject:"Современные информационные технологии и программные средства", brief:"Информационные технологии", teacher:"Кузина Н.В.", room:"503", shared:"ДГиМУ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Иностранный язык", teacher:"Квач Н.В.", room:"206"},
-          {num:4, start:"13:20", end:"14:40", subject:"Иностранный язык", teacher:"Квач Н.В.", room:"206"},
-          {num:5, start:"14:50", end:"16:10", subject:"Элективные дисциплины по физической культуре и спорту (фитнес)", brief:"Физкультура: фитнес", teacher:null, place:"Grand Fitness, ул. Глаголева, 3А"}
-        ],
-        "ДГиМУ-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Всеобщая история", teacher:"Майорова Н.О.", room:"204"},
-          {num:2, start:"10:00", end:"11:20", subject:"Современные информационные технологии и программные средства", brief:"Информационные технологии", teacher:"Кузина Н.В.", room:"503", shared:"ДМ-26"},
-          {num:3, start:"11:40", end:"13:00", subject:"Элективные дисциплины по физической культуре и спорту (шахматы)", brief:"Физкультура: шахматы", teacher:"Анисков А.С.", room:"503"},
-          {num:4, start:"13:20", end:"14:40", subject:"Элективные дисциплины по физической культуре и спорту (фитнес)", brief:"Физкультура: фитнес", teacher:null, place:"Grand Fitness, ул. Глаголева, 3А"}
-        ],
-        "ДЭ-26":[
-          {num:3, start:"11:40", end:"13:00", subject:"Основы высшей математики", teacher:"Кузина Н.В.", room:"204", shared:"ДТД-26"},
-          {num:4, start:"13:20", end:"14:40", subject:"Культура личности и общества", teacher:"Иевлева О.И.", room:"204", shared:"ДТД-26"},
-          {num:5, start:"14:50", end:"16:10", subject:"Элективные дисциплины по физической культуре и спорту (фитнес)", brief:"Физкультура: фитнес", teacher:null, place:"Grand Fitness, ул. Глаголева, 3А"}
-        ],
-        "ДТД-26":[
-          {num:1, start:"08:30", end:"09:50", subject:"Иностранный язык", teacher:"Вотинова О.Ю.", room:"507"},
-          {num:2, start:"10:00", end:"11:20", subject:"Иностранный язык", teacher:"Вотинова О.Ю.", room:"507"},
-          {num:3, start:"11:40", end:"13:00", subject:"Основы высшей математики", teacher:"Кузина Н.В.", room:"204", shared:"ДЭ-26"},
-          {num:4, start:"13:20", end:"14:40", subject:"Культура личности и общества", teacher:"Иевлева О.И.", room:"204", shared:"ДЭ-26"}
-        ]
-      }
-    },
-
-    { date:"2026-09-05", weekday:"Суббота", short:"Сб", dateLabel:"5 сентября", type:"notice",
-      notice:"День самостоятельной работы", noticeSub:"Аудиторных занятий нет.", tone:"rest" }
-  ];
+  var MONTH_GEN = ["января","февраля","марта","апреля","мая","июня",
+                   "июля","августа","сентября","октября","ноября","декабря"];
+  var MONTH_NOM = ["Январь","Февраль","Март","Апрель","Май","Июнь",
+                   "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+  var WD_SHORT  = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+  var WD_FULL   = ["понедельник","вторник","среда","четверг","пятница","суббота","воскресенье"];
 
   // ---------- состояние ----------
-  var state = { group:GROUPS[0], date:null, pinned:false };
+  var DATA   = null;
+  var state  = { group:null, date:null, week:null, pinned:false };
   var lastSig = null;
   var lastDateKey = null;
   var timer = null;
@@ -407,36 +383,22 @@
     tgCall("setBackgroundColor","#0B0D10");
   }
 
-  // ---------- хранилище выбранной группы ----------
-  function saveGroup(g){
-    try{ localStorage.setItem("selected_group", g); }catch(e){}
-    if (tg && tg.CloudStorage && tg.CloudStorage.setItem){
-      try{ tg.CloudStorage.setItem("selected_group", g, function(){}); }catch(e){}
-    }
+  // ---------- даты (UTC, чтобы часовой пояс не сдвигал сутки) ----------
+  function parseKey(k){
+    var p = String(k).split("-");
+    return Date.UTC(+p[0], (+p[1])-1, +p[2]);
   }
-  function loadGroupThenInit(){
-    var local = null;
-    try{ local = localStorage.getItem("selected_group"); }catch(e){}
-    if (local && GROUPS.indexOf(local) !== -1) state.group = local;
-
-    // рисуем сразу. на клиентах без CloudStorage (Telegram 6.0) колбэк
-    // не приходит вовсе, и ожидание превращалось в чёрный экран на секунду
-    init();
-
-    if (tg && tg.CloudStorage && tg.CloudStorage.getItem){
-      try{
-        tg.CloudStorage.getItem("selected_group", function(err, val){
-          if (err || !val) return;
-          if (GROUPS.indexOf(val) === -1 || val === state.group) return;
-          state.group = val;              // группу поменяли на другом устройстве
-          try{ localStorage.setItem("selected_group", val); }catch(e){}
-          renderGroupTabs();
-          renderDayTabs();
-          render(true);
-        });
-      }catch(e){}
-    }
+  function keyOf(ms){
+    var d = new Date(ms), m = d.getUTCMonth()+1, day = d.getUTCDate();
+    return d.getUTCFullYear() + "-" + (m<10?"0":"") + m + "-" + (day<10?"0":"") + day;
   }
+  function addDays(k, n){ return keyOf(parseKey(k) + n*86400000); }
+  function isoWeekday(k){ var d = new Date(parseKey(k)).getUTCDay(); return d === 0 ? 7 : d; }
+  function mondayOf(k){ return addDays(k, 1 - isoWeekday(k)); }
+  function dayNum(k){ return new Date(parseKey(k)).getUTCDate(); }
+  function monthOf(k){ return new Date(parseKey(k)).getUTCMonth(); }
+  function yearOf(k){ return new Date(parseKey(k)).getUTCFullYear(); }
+  function dateLabel(k){ return dayNum(k) + " " + MONTH_GEN[monthOf(k)]; }
 
   // ---------- время (Europe/Moscow) ----------
   var mskFmt = new Intl.DateTimeFormat("en-CA",{
@@ -451,7 +413,7 @@
     return { dateKey:map.year+"-"+map.month+"-"+map.day, sec:sec, mins:Math.floor(sec/60) };
   }
   function toMinutes(hhmm){
-    var p = hhmm.split(":");
+    var p = String(hhmm).split(":");
     return (+p[0])*60 + (+p[1]);
   }
   function fmtDuration(sec){
@@ -470,25 +432,98 @@
   var groupTabsEl = document.getElementById("groupTabs");
   var dayTabsEl   = document.getElementById("dayTabs");
   var contentEl   = document.getElementById("content");
+  var monthEl     = document.getElementById("monthLabel");
+  var whoEl       = document.getElementById("whoLine");
+  var prevWkEl    = document.getElementById("prevWk");
+  var nextWkEl    = document.getElementById("nextWk");
 
-  function getDay(dateKey){
-    for (var i=0;i<SCHEDULE.length;i++) if (SCHEDULE[i].date === dateKey) return SCHEDULE[i];
+  // ---------- разбор дня ----------
+  // приоритет: конкретная дата -> праздник -> каникулы/сессия -> недельный шаблон
+  function resolveDay(k){
+    if (!DATA) return { kind:"unknown" };
+    var meta = DATA.meta || {};
+    if (meta.yearStart && k < meta.yearStart) return { kind:"outside", why:"before" };
+    if (meta.yearEnd   && k > meta.yearEnd)   return { kind:"outside", why:"after"  };
+
+    var explicit = DATA.days && DATA.days[k];
+    if (explicit) return fromEntry(explicit, false);
+
+    var hol = DATA.holidays && DATA.holidays[k];
+    if (hol){                                  // строка — просто название, объект — с подписью
+      var isStr = (typeof hol === "string");
+      return { kind:"notice",
+               title: isStr ? hol : hol.title,
+               sub:   (isStr ? null : hol.sub) || "Нерабочий праздничный день.",
+               tone:"holiday" };
+    }
+
+    var br = findBreak(k);
+    if (br) return { kind:"notice", title:br.title, sub:br.sub || "Занятий нет.", tone:"rest" };
+
+    var pat = DATA.pattern && DATA.pattern[String(isoWeekday(k))];
+    if (pat) return fromEntry(pat, true);
+
+    return { kind:"unknown" };
+  }
+  function fromEntry(entry, fromPattern){
+    if (entry.notice){
+      return { kind:"notice", title:entry.notice.title, sub:entry.notice.sub,
+               tone:entry.notice.tone || "rest", pattern:fromPattern };
+    }
+    if (entry.lessons) return { kind:"lessons", lessons:entry.lessons, pattern:fromPattern };
+    return { kind:"unknown" };
+  }
+  function findBreak(k){
+    var list = (DATA && DATA.breaks) || [];
+    for (var i=0;i<list.length;i++){
+      if (list[i] && k >= list[i].from && k <= list[i].to) return list[i];
+    }
     return null;
   }
   function lessonsOf(day, group){
-    if (!day || day.type !== "lessons" || !day.lessons) return [];
+    if (!day || day.kind !== "lessons" || !day.lessons) return [];
     return day.lessons[group] || [];
   }
-  function pickInitialDate(dateKey){
-    if (getDay(dateKey)) return dateKey;
-    for (var i=0;i<SCHEDULE.length;i++) if (SCHEDULE[i].date > dateKey) return SCHEDULE[i].date; // ближайший будущий
-    return SCHEDULE[SCHEDULE.length-1].date;                                                     // иначе последний
+  function isProvisional(day, k){
+    var through = DATA && DATA.meta && DATA.meta.confirmedThrough;
+    return !!(day && day.pattern && through && k > through);
   }
 
-  // ---------- отрисовка вкладок ----------
+  // ---------- границы учебного года ----------
+  function weekMin(){ return mondayOf((DATA.meta && DATA.meta.yearStart) || "2026-09-01"); }
+  function weekMax(){ return mondayOf((DATA.meta && DATA.meta.yearEnd)   || "2027-06-30"); }
+  function clampDate(k){
+    var meta = DATA.meta || {};
+    if (meta.yearStart && k < meta.yearStart) return meta.yearStart;
+    if (meta.yearEnd   && k > meta.yearEnd)   return meta.yearEnd;
+    return k;
+  }
+  function pickInitialDate(todayKey){
+    var k = clampDate(todayKey);
+    if (isoWeekday(k) === 7) k = addDays(k, 1);        // воскресенья в сетке нет
+    return clampDate(k);
+  }
+
+  // ---------- шапка ----------
+  function renderHeader(){
+    var meta = DATA.meta || {};
+    monthEl.textContent = MONTH_NOM[monthOf(state.date)] + " " + yearOf(state.date);
+
+    var todayKey = nowMoscow().dateKey;
+    if (state.date !== todayKey && todayKey >= meta.yearStart && todayKey <= meta.yearEnd){
+      whoEl.innerHTML = '<button type="button" class="todaybtn" id="todayBtn">← сегодня</button>';
+      document.getElementById("todayBtn").addEventListener("click", function(){
+        goToDate(pickInitialDate(nowMoscow().dateKey));
+      });
+    } else {
+      whoEl.textContent = [meta.org, meta.course].filter(Boolean).join(" · ");
+    }
+  }
+
+  // ---------- вкладки групп ----------
   function renderGroupTabs(){
     groupTabsEl.innerHTML = "";
-    GROUPS.forEach(function(g){
+    (DATA.groups || []).forEach(function(g){
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "pill" + (g === state.group ? " active" : "");
@@ -507,30 +542,63 @@
     });
   }
 
+  // ---------- неделя и дни ----------
   function renderDayTabs(){
     var todayKey = nowMoscow().dateKey;
     dayTabsEl.innerHTML = "";
-    SCHEDULE.forEach(function(d){
-      var free = (d.type === "notice") || !lessonsOf(d, state.group).length;
+
+    for (var i=0;i<6;i++){                       // понедельник … суббота
+      var k = addDays(state.week, i);
+      var day = resolveDay(k);
+      var outside = (day.kind === "outside");
+      var free = outside || day.kind === "notice" || day.kind === "unknown"
+                 || !lessonsOf(day, state.group).length;
+
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "day"
-        + (d.date === state.date ? " active" : "")
-        + (d.date === todayKey ? " today" : "")
-        + (free ? " free" : "");
-      btn.setAttribute("aria-pressed", d.date === state.date ? "true" : "false");
-      btn.setAttribute("aria-label", d.weekday + ", " + d.dateLabel);
-      btn.innerHTML = '<div class="wd">'+esc(d.short)+'</div><div class="dt">'+esc(d.dateLabel.split(" ")[0])+'</div>';
-      btn.addEventListener("click", function(){
-        if (state.date === d.date) return;
-        state.date = d.date;
-        state.pinned = (d.date !== todayKey);
-        haptic();
-        renderDayTabs();
-        render(true);
-      });
+        + (k === state.date ? " active" : "")
+        + (k === todayKey ? " today" : "")
+        + (free ? " free" : "")
+        + (outside ? " out" : "");
+      btn.setAttribute("aria-pressed", k === state.date ? "true" : "false");
+      btn.setAttribute("aria-label", WD_FULL[i] + ", " + dateLabel(k));
+      btn.innerHTML = '<div class="wd">'+WD_SHORT[i]+'</div><div class="dt">'+dayNum(k)+'</div>';
+      (function(key){
+        btn.addEventListener("click", function(){
+          if (state.date === key) return;
+          goToDate(key);
+        });
+      })(k);
       dayTabsEl.appendChild(btn);
-    });
+    }
+
+    prevWkEl.disabled = (state.week <= weekMin());
+    nextWkEl.disabled = (state.week >= weekMax());
+  }
+
+  function goToDate(k){
+    state.date = k;
+    state.week = mondayOf(k);
+    state.pinned = (k !== nowMoscow().dateKey);
+    haptic();
+    renderHeader();
+    renderDayTabs();
+    render(true);
+  }
+  function shiftWeek(dir){
+    var target = addDays(state.week, dir*7);
+    if (target < weekMin() || target > weekMax()) return;
+    var offset = Math.min(5, Math.max(0, isoWeekday(state.date) - 1));
+    state.week = target;
+    goToDate(clampDate(addDays(target, offset)));   // не выпадаем за границы года
+  }
+  function shiftDay(dir){
+    var k = addDays(state.date, dir);
+    if (isoWeekday(k) === 7) k = addDays(k, dir);      // перепрыгиваем воскресенье
+    var meta = DATA.meta || {};
+    if (k < meta.yearStart || k > meta.yearEnd) return;
+    goToDate(k);
   }
 
   // ---------- статусы ----------
@@ -543,10 +611,9 @@
   }
 
   function signature(now){
-    var day = getDay(state.date);
-    if (!day) return "none";
-    if (day.type === "notice") return state.date + "|notice";
-    var isToday = (day.date === now.dateKey);
+    var day = resolveDay(state.date);
+    if (day.kind !== "lessons") return state.date + "|" + day.kind + "|" + (day.title || "");
+    var isToday = (state.date === now.dateKey);
     var list = lessonsOf(day, state.group);
     if (!list.length) return state.date + "|" + state.group + "|empty";
     var st = list.map(function(l){ return lessonStatus(l, isToday, now.mins).charAt(0); }).join("");
@@ -588,14 +655,12 @@
   }
 
   function leftText(lesson, now){
-    var endSec = toMinutes(lesson.end)*60;
-    var rest = endSec - now.sec;
+    var rest = toMinutes(lesson.end)*60 - now.sec;
     if (rest <= 60) return "меньше минуты";
     return "осталось " + fmtDuration(rest);
   }
   function soonText(lesson, now){
-    var startSec = toMinutes(lesson.start)*60;
-    var wait = startSec - now.sec;
+    var wait = toMinutes(lesson.start)*60 - now.sec;
     if (wait <= 60) return "вот-вот";
     return "через " + fmtDuration(wait);
   }
@@ -613,19 +678,32 @@
     lastSig = sig;
 
     contentEl.innerHTML = "";
-    var day = getDay(state.date);
-    if (!day) return;
+    var day = resolveDay(state.date);
 
-    if (day.type === "notice"){
-      contentEl.appendChild(noticeBlock(day.notice, day.noticeSub || "Занятий по расписанию нет.", day.tone || "rest"));
+    if (day.kind === "outside"){
+      contentEl.appendChild(noticeBlock(
+        day.why === "after" ? "Учебный год завершён" : "Учебный год ещё не начался",
+        "Расписание ведётся с " + dateLabel(DATA.meta.yearStart) + " по " + dateLabel(DATA.meta.yearEnd) + ".",
+        "rest"));
+      return;
+    }
+    if (day.kind === "unknown"){
+      contentEl.appendChild(noticeBlock("Расписание не заполнено",
+        WD_FULL[isoWeekday(state.date)-1].replace(/^./, function(c){ return c.toUpperCase(); })
+        + ", " + dateLabel(state.date) + ". Данных на этот день пока нет.", "rest"));
+      return;
+    }
+    if (day.kind === "notice"){
+      contentEl.appendChild(noticeBlock(day.title, day.sub || "Занятий по расписанию нет.", day.tone));
       return;
     }
 
     var list = lessonsOf(day, state.group);
-    var isToday = (day.date === now.dateKey);
+    var isToday = (state.date === now.dateKey);
 
     if (!list.length){
-      contentEl.appendChild(noticeBlock("Пар нет", "У группы " + state.group + " в этот день занятий не запланировано.", "rest"));
+      contentEl.appendChild(noticeBlock("Пар нет",
+        "У группы " + state.group + " в этот день занятий не запланировано.", "rest"));
       return;
     }
 
@@ -645,10 +723,13 @@
     });
     if (isToday && (anyNow || anyLeft)) tl.className += " tight";
 
-    if (isToday && !anyNow && !anyLeft){
+    var footText = "";
+    if (isToday && !anyNow && !anyLeft) footText = "Пары на сегодня закончились";
+    else if (isProvisional(day, state.date)) footText = "Предварительно — по недельному шаблону";
+    if (footText){
       var f = document.createElement("div");
       f.className = "foot";
-      f.textContent = "Пары на сегодня закончились";
+      f.textContent = footText;
       tl.appendChild(f);
     }
     contentEl.appendChild(tl);
@@ -656,26 +737,25 @@
 
   function noticeBlock(big, sub, tone){
     var n = document.createElement("div");
-    n.className = "notice " + (tone === "event" ? "event" : "rest");
+    n.className = "notice " + (tone === "event" ? "event" : tone === "holiday" ? "holiday" : "rest");
     n.innerHTML = '<div class="big">'+esc(big)+'</div><div class="sub">'+esc(sub)+'</div>';
     return n;
   }
 
   // обновляем только цифры, не пересобирая DOM
   function softUpdate(now){
-    var day = getDay(state.date);
-    if (!day || day.type !== "lessons") return;
-    var list = lessonsOf(day, state.group);
-    var isToday = (day.date === now.dateKey);
-    if (!isToday) return;
+    var day = resolveDay(state.date);
+    if (day.kind !== "lessons") return;
+    if (state.date !== now.dateKey) return;
 
+    var list = lessonsOf(day, state.group);
     var leftEl = document.getElementById("leftTxt");
     var barEl  = document.getElementById("liveBar");
     var soonEl = document.getElementById("soonTxt");
     var upcomingUsed = false;
 
     list.forEach(function(l){
-      var st = lessonStatus(l, isToday, now.mins);
+      var st = lessonStatus(l, true, now.mins);
       if (st === "now"){
         if (leftEl) leftEl.textContent = leftText(l, now);
         if (barEl)  barEl.style.width = progressPct(l, now) + "%";
@@ -691,7 +771,11 @@
     var now = nowMoscow();
     if (now.dateKey !== lastDateKey){
       lastDateKey = now.dateKey;
-      if (!state.pinned) state.date = pickInitialDate(now.dateKey);
+      if (!state.pinned){
+        state.date = pickInitialDate(now.dateKey);
+        state.week = mondayOf(state.date);
+      }
+      renderHeader();
       renderDayTabs();
       render(true);
       return;
@@ -712,27 +796,99 @@
       var t = ev.changedTouches[0];
       var dx = t.clientX - x0, dy = t.clientY - y0;
       if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-      var i = SCHEDULE.findIndex(function(d){ return d.date === state.date; });
-      var j = i + (dx < 0 ? 1 : -1);
-      if (i < 0 || j < 0 || j >= SCHEDULE.length) return;
-      state.date = SCHEDULE[j].date;
-      state.pinned = (state.date !== nowMoscow().dateKey);
-      haptic();
-      renderDayTabs();
-      render(true);
+      shiftDay(dx < 0 ? 1 : -1);
     }, {passive:true});
   }
 
+  // ---------- хранилище выбранной группы ----------
+  function saveGroup(g){
+    try{ localStorage.setItem("selected_group", g); }catch(e){}
+    if (tg && tg.CloudStorage && tg.CloudStorage.setItem){
+      try{ tg.CloudStorage.setItem("selected_group", g, function(){}); }catch(e){}
+    }
+  }
+  function storedGroup(){
+    var v = null;
+    try{ v = localStorage.getItem("selected_group"); }catch(e){}
+    return v;
+  }
+
+  // ---------- загрузка данных ----------
+  function getJSON(url, ok, fail){
+    try{
+      var x = new XMLHttpRequest();
+      x.open("GET", url, true);
+      x.onreadystatechange = function(){
+        if (x.readyState !== 4) return;
+        if (x.status >= 200 && x.status < 300){
+          var parsed = null;
+          try{ parsed = JSON.parse(x.responseText); }catch(e){ fail(); return; }
+          ok(parsed);
+        } else fail();
+      };
+      x.onerror = function(){ fail(); };
+      x.send();
+    }catch(e){ fail(); }
+  }
+  function valid(json){
+    return !!(json && json.meta && json.meta.yearStart && json.meta.yearEnd
+              && json.groups && json.groups.length);
+  }
+
+  function loadData(){
+    var cachedRaw = null;
+    try{ cachedRaw = localStorage.getItem(CACHE_KEY); }catch(e){}
+    if (cachedRaw){
+      var cached = null;
+      try{ cached = JSON.parse(cachedRaw); }catch(e){}
+      if (valid(cached)){ DATA = cached; boot(); }     // мгновенный старт из кэша
+    }
+
+    getJSON(DATA_URL + "?t=" + Date.now(), function(json){
+      if (!valid(json)){ if (!DATA) showFatal(); return; }
+      var fresh = JSON.stringify(json);
+      if (DATA && fresh === JSON.stringify(DATA)) return;   // ничего не поменялось
+      try{ localStorage.setItem(CACHE_KEY, fresh); }catch(e){}
+      DATA = json;
+      if (!started) boot(); else reboot();
+    }, function(){
+      if (!DATA) showFatal();
+    });
+  }
+
+  function showFatal(){
+    contentEl.innerHTML = "";
+    var n = noticeBlock("Расписание недоступно",
+      "Не удалось загрузить schedule.json. Проверьте соединение и попробуйте ещё раз.", "rest");
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "retry"; b.textContent = "Повторить";
+    b.addEventListener("click", function(){ contentEl.innerHTML = ""; loadData(); });
+    n.appendChild(b);
+    contentEl.appendChild(n);
+  }
+
   // ---------- запуск ----------
-  function init(){
-    if (started) return;      // защита от двойного старта
+  function pickGroup(){
+    var groups = DATA.groups || [];
+    var saved = storedGroup();
+    return (saved && groups.indexOf(saved) !== -1) ? saved : groups[0];
+  }
+
+  function boot(){
+    if (started) return;
     started = true;
 
+    state.group = pickGroup();
     var now = nowMoscow();
     lastDateKey = now.dateKey;
-    state.date = pickInitialDate(now.dateKey);
+    state.date  = pickInitialDate(now.dateKey);
+    state.week  = mondayOf(state.date);
     state.pinned = false;
 
+    prevWkEl.addEventListener("click", function(){ shiftWeek(-1); });
+    nextWkEl.addEventListener("click", function(){ shiftWeek(1); });
+
+    renderHeader();
     renderGroupTabs();
     renderDayTabs();
     render(true);
@@ -744,9 +900,36 @@
     document.addEventListener("visibilitychange", function(){
       if (!document.hidden) tick();     // мгновенно освежаем после сворачивания
     });
+
+    // группа могла быть выбрана на другом устройстве
+    if (tg && tg.CloudStorage && tg.CloudStorage.getItem){
+      try{
+        tg.CloudStorage.getItem("selected_group", function(err, val){
+          if (err || !val || !DATA) return;
+          if ((DATA.groups || []).indexOf(val) === -1 || val === state.group) return;
+          state.group = val;
+          try{ localStorage.setItem("selected_group", val); }catch(e){}
+          renderGroupTabs();
+          renderDayTabs();
+          render(true);
+        });
+      }catch(e){}
+    }
   }
 
-  loadGroupThenInit();
+  // данные обновились по сети — пересобираем, сохраняя выбор пользователя
+  function reboot(){
+    if ((DATA.groups || []).indexOf(state.group) === -1) state.group = pickGroup();
+    state.date = clampDate(state.date);
+    state.week = mondayOf(state.date);
+    lastSig = null;
+    renderHeader();
+    renderGroupTabs();
+    renderDayTabs();
+    render(true);
+  }
+
+  loadData();
 })();
 </script>
 </body>
