@@ -415,28 +415,27 @@
     }
   }
   function loadGroupThenInit(){
-    var done = false;
-    function go(val){
-      if (done) return;
-      done = true;
-      if (val && GROUPS.indexOf(val) !== -1) state.group = val;
-      init();
-    }
-
     var local = null;
     try{ local = localStorage.getItem("selected_group"); }catch(e){}
+    if (local && GROUPS.indexOf(local) !== -1) state.group = local;
+
+    // рисуем сразу. на клиентах без CloudStorage (Telegram 6.0) колбэк
+    // не приходит вовсе, и ожидание превращалось в чёрный экран на секунду
+    init();
 
     if (tg && tg.CloudStorage && tg.CloudStorage.getItem){
-      // страховка: если клиент не вызовет колбэк — стартуем сами
-      setTimeout(function(){ go(local); }, 1200);
       try{
         tg.CloudStorage.getItem("selected_group", function(err, val){
-          go((!err && val) ? val : local);
+          if (err || !val) return;
+          if (GROUPS.indexOf(val) === -1 || val === state.group) return;
+          state.group = val;              // группу поменяли на другом устройстве
+          try{ localStorage.setItem("selected_group", val); }catch(e){}
+          renderGroupTabs();
+          renderDayTabs();
+          render(true);
         });
-        return;
       }catch(e){}
     }
-    go(local);
   }
 
   // ---------- время (Europe/Moscow) ----------
