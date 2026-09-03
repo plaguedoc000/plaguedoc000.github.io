@@ -55,6 +55,24 @@
 
   /* ---------- шапка ---------- */
   .hdr{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex:0 0 auto;}
+  .hdr .title{display:flex; align-items:center; gap:8px; min-width:0;}
+  .infobtn{
+    flex:0 0 auto;
+    width:clamp(25px,3.35dvh,29px);
+    height:clamp(25px,3.35dvh,29px);
+    border:1px solid var(--hairline);
+    background:var(--card);
+    color:var(--ink-dim);
+    border-radius:50%;
+    font-family:var(--font-display);
+    font-size:clamp(14.5px,1.95dvh,16px);
+    font-weight:700;
+    line-height:1;
+    padding:0;
+    cursor:pointer;
+    transition:color .15s ease,border-color .15s ease;
+  }
+  .infobtn:hover{color:var(--gold); border-color:var(--gold-dim);}
   .hdr h1{
     font-family:var(--font-display);
     font-weight:700;
@@ -303,6 +321,72 @@
     padding-top:2px;
   }
 
+  /* ---------- окно «о приложении» ---------- */
+  .modal{
+    position:fixed; inset:0; z-index:50;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    background:rgba(6,8,11,.74);
+    -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  }
+  .modal[hidden]{display:none;}      /* display:flex перебивает браузерное [hidden] */
+  .sheet{
+    width:100%; max-width:330px;
+    background:var(--card-2);
+    border:1px solid var(--hairline);
+    border-radius:16px;
+    padding:22px 20px 14px;
+    text-align:center;
+  }
+  .sheet .ttl{
+    font-family:var(--font-display);
+    font-size:clamp(19px,2.6dvh,22px);
+    font-weight:700;
+    line-height:1.2;
+  }
+  .sheet .lbl{
+    margin-top:14px;
+    font-size:clamp(11.5px,1.5dvh,12.5px);
+    color:var(--ink-dim);
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+  .sheet .name{
+    margin-top:2px;
+    font-size:clamp(16px,2.15dvh,18px);
+    font-weight:700;
+  }
+  .sheet .note{
+    margin-top:14px;
+    font-size:clamp(13.5px,1.8dvh,15px);
+    color:var(--ink-soft);
+    line-height:1.45;
+  }
+  .tglink{
+    display:inline-block;
+    margin-top:16px;
+    padding:10px 20px;
+    border-radius:999px;
+    background:var(--gold);
+    color:#12140F;
+    font-size:clamp(14px,1.9dvh,15.5px);
+    font-weight:800;
+    text-decoration:none;
+    cursor:pointer;
+  }
+  .sheet .close{
+    display:block;
+    width:100%;
+    margin-top:6px;
+    padding:10px 0 2px;
+    border:0; background:transparent;
+    color:var(--ink-dim);
+    font-family:var(--font-body);
+    font-size:clamp(13px,1.7dvh,14px);
+    font-weight:600;
+    cursor:pointer;
+  }
+
   button{font:inherit;}
   :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
   @media (prefers-reduced-motion:reduce){
@@ -322,7 +406,10 @@
 <div class="app">
 
   <header class="hdr">
-    <h1>Расписание</h1>
+    <div class="title">
+      <h1>Расписание</h1>
+      <button class="infobtn" type="button" id="aboutBtn" aria-label="Об авторе и обратной связи">i</button>
+    </div>
     <div class="meta">
       <div class="mon" id="monthLabel">&nbsp;</div>
       <div class="who" id="whoLine">&nbsp;</div>
@@ -338,6 +425,17 @@
   <div class="rule"></div>
   <main id="content"></main>
 
+</div>
+
+<div class="modal" id="aboutModal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="О приложении">
+    <div class="ttl">О приложении</div>
+    <div class="lbl">Автор</div>
+    <div class="name">Никита Кузин</div>
+    <div class="note">Нашли ошибку в расписании или есть идея, что улучшить, — напишите.</div>
+    <a class="tglink" id="tgLink" href="https://t.me/plaguedoc000" target="_blank" rel="noopener">@plaguedoc000</a>
+    <button class="close" type="button" id="aboutClose">Закрыть</button>
+  </div>
 </div>
 
 <script>
@@ -484,11 +582,6 @@
     if (!day || day.kind !== "lessons" || !day.lessons) return [];
     return day.lessons[group] || [];
   }
-  function isProvisional(day, k){
-    var through = DATA && DATA.meta && DATA.meta.confirmedThrough;
-    return !!(day && day.pattern && through && k > through);
-  }
-
   // ---------- границы учебного года ----------
   function weekMin(){ return mondayOf((DATA.meta && DATA.meta.yearStart) || "2026-09-01"); }
   function weekMax(){ return mondayOf((DATA.meta && DATA.meta.yearEnd)   || "2027-06-30"); }
@@ -723,13 +816,10 @@
     });
     if (isToday && (anyNow || anyLeft)) tl.className += " tight";
 
-    var footText = "";
-    if (isToday && !anyNow && !anyLeft) footText = "Пары на сегодня закончились";
-    else if (isProvisional(day, state.date)) footText = "Предварительно — по недельному шаблону";
-    if (footText){
+    if (isToday && !anyNow && !anyLeft){
       var f = document.createElement("div");
       f.className = "foot";
-      f.textContent = footText;
+      f.textContent = "Пары на сегодня закончились";
       tl.appendChild(f);
     }
     contentEl.appendChild(tl);
@@ -867,6 +957,36 @@
     contentEl.appendChild(n);
   }
 
+  // ---------- окно «о приложении» ----------
+  function bindAbout(){
+    var modal = document.getElementById("aboutModal");
+    var open  = document.getElementById("aboutBtn");
+    var close = document.getElementById("aboutClose");
+    var link  = document.getElementById("tgLink");
+
+    function show(){ modal.hidden = false; haptic(); }
+    function hide(){ modal.hidden = true; }
+
+    open.addEventListener("click", show);
+    close.addEventListener("click", hide);
+    modal.addEventListener("click", function(ev){
+      if (ev.target === modal) hide();          // клик по затемнению
+    });
+    document.addEventListener("keydown", function(ev){
+      if (ev.key === "Escape" && !modal.hidden) hide();
+    });
+    link.addEventListener("click", function(ev){
+      // внутри Telegram обычная ссылка не открывается — просим клиент сам.
+      // в обычном браузере метод тоже есть, но молча ничего не делает,
+      // поэтому сначала убеждаемся, что мы правда внутри клиента
+      var inTelegram = !!(tg && tg.platform && tg.platform !== "unknown");
+      if (inTelegram && tgCall("openTelegramLink", "https://t.me/plaguedoc000")){
+        ev.preventDefault();
+        hide();
+      }
+    });
+  }
+
   // ---------- запуск ----------
   function pickGroup(){
     var groups = DATA.groups || [];
@@ -893,6 +1013,7 @@
     renderDayTabs();
     render(true);
     bindSwipe();
+    bindAbout();
 
     if (timer) clearInterval(timer);
     timer = setInterval(tick, 10000);
