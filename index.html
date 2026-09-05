@@ -178,7 +178,7 @@
 
   .lesson{
     position:relative;
-    flex:1 1 0;
+    flex:1 1 auto;      /* высота от содержимого: пара с подгруппами выше обычной */
     min-height:0;
     max-height:clamp(126px,20.5dvh,180px);
     overflow:hidden;
@@ -223,6 +223,13 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .lesson .stream{font-size:clamp(12px,1.6dvh,13.5px); color:var(--gold-dim); font-weight:600;}
+  .lesson .subs{display:flex; flex-direction:column; gap:1px;}
+  .lesson .sgrow{
+    font-size:clamp(12px,1.6dvh,13.5px);
+    color:var(--ink-soft);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .lesson .sgrow b{color:var(--ink); font-weight:700;}
 
   /* идёт сейчас */
   .lesson.now{
@@ -268,6 +275,7 @@
   .timeline.tight .lesson.past .body{gap:0;}
   .timeline.tight .lesson.past .subj{font-size:clamp(13.5px,1.8dvh,15px); font-weight:500; -webkit-line-clamp:1;}
   .timeline.tight .lesson.past .info,
+  .timeline.tight .lesson.past .subs,
   .timeline.tight .lesson.past .stream{display:none;}
   .timeline.tight .lesson.past .top{font-size:clamp(12px,1.55dvh,13px);}
 
@@ -396,8 +404,9 @@
   /* очень низкие экраны (iPhone SE и подобные): ужимаем воздух, но не шрифты */
   @media (max-height:600px){
     .app{padding-left:11px; padding-right:11px;}
-    .lesson{padding-left:10px; padding-right:10px;}
+    .lesson{padding:5px 10px;}
     .lesson .body{gap:2px;}
+    .lesson .subs{gap:0;}
     .notice{padding-top:14px; padding-bottom:14px;}
   }
 </style>
@@ -719,8 +728,20 @@
     el.className = "lesson" + (status === "now" ? " now" : "") + (status === "past" ? " past" : "");
 
     var place = lesson.room ? ("ауд. " + lesson.room) : (lesson.place || "");
-    var info = [lesson.teacher, place].filter(Boolean).join(" · ");
+    var info = [lesson.teacher, place, lesson.note].filter(Boolean).join(" · ");
     var title = lesson.brief || lesson.subject;
+
+    // подгруппы: номер и аудитория идут первыми, чтобы при обрезке
+    // терялась фамилия, а не то, куда идти
+    var subs = "";
+    if (lesson.subgroups && lesson.subgroups.length){
+      subs = '<div class="subs">' + lesson.subgroups.map(function(sg){
+        var sp = sg.room ? ("ауд. " + sg.room) : (sg.place || "");
+        return '<div class="sgrow"><b>' + esc(sg.label) + '</b>'
+             + (sp ? ' · ' + esc(sp) : '')
+             + (sg.teacher ? ' · ' + esc(sg.teacher) : '') + '</div>';
+      }).join("") + '</div>';
+    }
 
     var right = "";
     if (status === "now"){
@@ -735,6 +756,7 @@
         '<div class="top"><span>'+esc(lesson.start)+' – '+esc(lesson.end)+'</span>'+right+'</div>'+
         '<div class="subj" title="'+esc(lesson.subject)+'">'+esc(title)+'</div>'+
         (info ? '<div class="info">'+esc(info)+'</div>' : '') +
+        subs +
         (lesson.shared ? '<div class="stream">поток с '+esc(lesson.shared)+'</div>' : '')+
       '</div>';
 
